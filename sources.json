@@ -1,0 +1,10 @@
+{
+  "sources": [
+    {"name": "The Daily Star", "url": "https://www.thedailystar.net/rss", "category": "local"},
+    {"name": "Dhaka Tribune", "url": "https://www.dhakatribune.com/feed", "category": "local"},
+    {"name": "Financial Express", "url": "https://thefinancialexpress.com.bd/rss", "category": "business"},
+    {"name": "bdnews24", "url": "https://bdnews24.com/business/feed", "category": "business"},
+    {"name": "Reuters", "url": "https://www.reuters.com/rss", "category": "international"},
+    {"name": "Energy Bangla", "url": "https://energybangla.com/feed", "category": "energy"}
+  ]
+}
