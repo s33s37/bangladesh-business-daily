@@ -1,11 +1,12 @@
 {
   "sources": [
+    {"name": "The Daily Star", "url": "https://www.thedailystar.net/frontpage/rss.xml", "category": "local"},
     {"name": "The Daily Star", "url": "https://www.thedailystar.net/rss", "category": "local"},
-    {"name": "The Daily Star Frontpage", "url": "https://www.thedailystar.net/frontpage/rss.xml", "category": "local"},
+    {"name": "Dhaka Tribune", "url": "https://www.dhakatribune.com/feed", "category": "local"},
     {"name": "The Business Standard", "url": "https://www.tbsnews.net/rss.xml", "category": "business"},
     {"name": "New Age", "url": "https://www.newagebd.net/feed", "category": "local"},
     {"name": "Prothom Alo English", "url": "https://en.prothomalo.com/feed", "category": "local"},
-    {"name": "Reuters", "url": "https://www.reuters.com/rss", "category": "international"},
-    {"name": "Al Jazeera", "url": "https://www.aljazeera.com/xml/rss/all.xml", "category": "international"}
+    {"name": "Financial Express", "url": "https://thefinancialexpress.com.bd/rss", "category": "business"},
+    {"name": "Reuters", "url": "https://www.reuters.com/rss", "category": "international"}
   ]
 }
