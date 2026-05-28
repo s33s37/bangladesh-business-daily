@@ -1,8 +1,13 @@
+import sys
+import os
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
 import feedparser
-import requests
 from datetime import datetime, timedelta
 import pytz
 import json
+
+# 从根目录导入配置
 from config import DAYS_BACK, MAX_NEWS
 
 def fetch_rss_feeds():
@@ -35,7 +40,7 @@ def fetch_rss_feeds():
     seen = set()
     unique_news = []
     for news in all_news:
-        key = news['title'] + news['link']
+        key = (news['title'] + news['link']).lower()
         if key not in seen:
             seen.add(key)
             unique_news.append(news)
@@ -45,5 +50,6 @@ def fetch_rss_feeds():
 
 if __name__ == "__main__":
     news = fetch_rss_feeds()
+    os.makedirs('data', exist_ok=True)
     with open('data/raw_news.json', 'w', encoding='utf-8') as f:
         json.dump(news, f, ensure_ascii=False, indent=2)
