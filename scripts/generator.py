@@ -2,15 +2,24 @@ from jinja2 import Template
 import json
 from datetime import datetime
 import pytz
-from config import REPORT_TITLE, INDUSTRIES
+import os
+from config import REPORT_TITLE
 
-def generate_html_report(analyzed_news):
-    with open('data/analyzed_news.json', 'r', encoding='utf-8') as f:
+def generate_html_report():
+    # 强制读取最新分析结果
+    json_path = 'data/analyzed_news.json'
+    if not os.path.exists(json_path):
+        print("错误：analyzed_news.json 不存在")
+        return
+    
+    with open(json_path, 'r', encoding='utf-8') as f:
         data = json.load(f)
+    
+    print(f"生成HTML时读取到 {len(data)} 条情报")
     
     # 统计数据
     total = len(data)
-    risk_count = sum(1 for item in data if item.get('impact') == '负面' or '风险' in str(item.get('risk_tags')))
+    risk_count = sum(1 for item in data if item.get('impact') == '负面' or any('风险' in str(tag) for tag in item.get('risk_tags', [])))
     policy_count = sum(1 for item in data if item.get('type') == '政策')
     positive_count = sum(1 for item in data if item.get('impact') == '正面')
     
@@ -21,10 +30,8 @@ def generate_html_report(analyzed_news):
         industry = item.get('industry', '其他')
         industry_data[industry].append(item)
     
-    # 生成日期
     beijing_time = datetime.now(pytz.timezone('Asia/Shanghai')).strftime("%Y年%m月%d日")
     
-    # HTML 模板
     html_template = """
     <!DOCTYPE html>
     <html lang="zh-CN">
@@ -41,10 +48,10 @@ def generate_html_report(analyzed_news):
             .card-hover:hover { transform: translateY(-4px); transition: all 0.3s; }
         </style>
     </head>
-    <body class="bg-gray-50">
+    <body class="bg-gray-50 font-sans">
         <div class="max-w-7xl mx-auto p-6">
             <div class="text-center mb-8">
-                <h1 class="text-4xl font-bold">{{ title }}</h1>
+                <h1 class="text-4xl font-bold text-gray-900">{{ title }}</h1>
                 <p class="text-gray-600 mt-2">{{ date }} · 北京时间 07:00 更新</p>
             </div>
 
@@ -78,14 +85,14 @@ def generate_html_report(analyzed_news):
                         <span class="bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-xs">{{ items|length }}条</span>
                     </div>
                     {% for item in items[:3] %}
-                    <div class="mb-5 border-b pb-4 last:border-0">
-                        <span class="tag-{{ item.impact|lower if item.impact in ['正面','负面','中性'] else 'neutral' }} px-3 py-1 rounded-full text-xs">
+                    <div class="mb-6 last:mb-0 border-b pb-4 last:border-none">
+                        <span class="tag-{{ 'positive' if item.impact == '正面' else 'negative' if item.impact == '负面' else 'neutral' }} px-3 py-1 rounded-full text-xs">
                             {{ item.impact }}
                         </span>
-                        <p class="mt-3 text-gray-700 text-sm">{{ item.chinese_summary[:180] }}...</p>
-                        <div class="text-xs text-gray-500 mt-2">
+                        <p class="mt-3 text-gray-700 text-sm leading-relaxed">{{ item.chinese_summary[:220] }}{% if item.chinese_summary|length > 220 %}...{% endif %}</p>
+                        <div class="text-xs text-gray-500 mt-3">
                             重要性：{{ item.importance }} · 
-                            {% if item.entities %}{{ item.entities[:2]|join(', ') }}{% endif %}
+                            {% if item.entities %}{{ item.entities[:2]|join('、') }}{% endif %}
                         </div>
                     </div>
                     {% endfor %}
@@ -115,4 +122,7 @@ def generate_html_report(analyzed_news):
     with open('index.html', 'w', encoding='utf-8') as f:
         f.write(html_content)
     
-    print("HTML报告生成完成 → index.html")
+    print(f"HTML报告生成完成 → index.html (共 {total} 条情报)")
+
+if __name__ == "__main__":
+    generate_html_report()
